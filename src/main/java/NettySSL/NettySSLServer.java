@@ -1,5 +1,6 @@
 package NettySSL;
 
+import NettySSL.handler.SecureServerHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -9,7 +10,13 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.DelimiterBasedFrameDecoder;
+import io.netty.handler.codec.Delimiters;
+import io.netty.handler.codec.string.StringDecoder;
+import io.netty.handler.codec.string.StringEncoder;
+import io.netty.handler.ssl.SslHandler;
 
+import javax.net.ssl.SSLEngine;
 import java.util.Date;
 
 public class NettySSLServer {
@@ -32,7 +39,16 @@ public class NettySSLServer {
                     .childHandler(new ChannelInitializer<SocketChannel>(){
                         protected void initChannel(SocketChannel ch) {
                             ChannelPipeline pipeline = ch.pipeline();
-                            pipeline.addLast();
+                            SSLEngine engine = SecureSslContextFactory.getServerContext().createSSLEngine();
+                            engine.setUseClientMode(false);
+                            engine.setNeedClientAuth(true);
+                            pipeline.addFirst("ssl", new SslHandler(engine));
+                            // On top of the SSL handler, add the text line codec.
+                            pipeline.addLast("framer", new DelimiterBasedFrameDecoder(8192, Delimiters.lineDelimiter()));
+                            pipeline.addLast("decoder", new StringDecoder());
+                            pipeline.addLast("encoder", new StringEncoder());
+                            // and then business logic.
+                            pipeline.addLast("handler", new SecureServerHandler());
                         }
                     });
             bind(serverBootstrap,PORT);
@@ -52,4 +68,10 @@ public class NettySSLServer {
             }
         });
     }
+
+    public static void main(String[] args){
+        NettySSLServer nettySSLServer = new NettySSLServer();
+        nettySSLServer.start();
+    }
+
 }

@@ -32,17 +32,17 @@ public class SSLContextFactory {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        sslContextS.createSSLEngine().getSupportedCipherSuites();
-        sslContextC.createSSLEngine().getSupportedCipherSuites();
+//        sslContextS.createSSLEngine().getSupportedCipherSuites();
+//        sslContextC.createSSLEngine().getSupportedCipherSuites();
         SSL_CONTEXT_S = sslContextS;
         SSL_CONTEXT_C = sslContextC;
     }
 
-    public static SSLContext getSslContext() {
+    public static SSLContext getServerSslContext() {
         return SSL_CONTEXT_S;
     }
 
-    public static SSLContext getSslContext2() {
+    public static SSLContext getClientSslContext2() {
         return SSL_CONTEXT_C;
     }
 
@@ -54,9 +54,9 @@ public class SSLContextFactory {
         try {
             // 获得KeyManagerFactory对象. 初始化位默认算法
             keyFac = TrustManagerFactory.getInstance("SunX509");
-            is = new FileInputStream("D:\\CodeRepository\\secure\\src\\main\\resources\\kserver.keystore");
+            is = new FileInputStream("D:\\CodeRepository\\secure\\src\\main\\resources\\tserver.keystore");
             ks = KeyStore.getInstance("JKS");
-            String keyStorePass = "sNetty";
+            String keyStorePass = "123456";
             ks.load(is, keyStorePass.toCharArray());
             keyFac.init(ks);
             kms = keyFac.getTrustManagers();
@@ -83,9 +83,9 @@ public class SSLContextFactory {
         try {
             // 获得KeyManagerFactory对象. 初始化位默认算法
             keyFac = TrustManagerFactory.getInstance("SunX509");
-            is = new FileInputStream("main/java/conf/cChat.jks");
+            is = new FileInputStream("D:\\CodeRepository\\secure\\src\\main\\resources\\tclient.keystore");
             ks = KeyStore.getInstance("JKS");
-            String keyStorePass = "sNetty";
+            String keyStorePass = "123456";
             ks.load(is, keyStorePass.toCharArray());
             keyFac.init(ks);
             kms = keyFac.getTrustManagers();
@@ -111,9 +111,9 @@ public class SSLContextFactory {
         try {
             // 获得KeyManagerFactory对象. 初始化位默认算法
             keyFac = KeyManagerFactory.getInstance("SunX509");
-            is = new FileInputStream("main/java/conf/sChat.jks");
+            is = new FileInputStream("D:/CodeRepository/secure/src/main/resources/kserver.keystore");
             ks = KeyStore.getInstance("JKS");
-            String keyStorePass = "sNetty";
+            String keyStorePass = "123456";
             ks.load(is, keyStorePass.toCharArray());
             keyFac.init(ks, keyStorePass.toCharArray());
             kms = keyFac.getKeyManagers();
@@ -140,9 +140,9 @@ public class SSLContextFactory {
         try {
             // 获得KeyManagerFactory对象. 初始化位默认算法
             keyFac = KeyManagerFactory.getInstance("SunX509");
-            is = new FileInputStream("main/java/conf/cChat.jks");
+            is = new FileInputStream("D:\\CodeRepository\\secure\\src\\main\\resources\\kclient.keystore");
             ks = KeyStore.getInstance("JKS");
-            String keyStorePass = "sNetty";
+            String keyStorePass = "123456";
             ks.load(is, keyStorePass.toCharArray());
             keyFac.init(ks, keyStorePass.toCharArray());
             kms = keyFac.getKeyManagers();
